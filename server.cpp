@@ -517,7 +517,11 @@ private:
                         cout << "Pemanggilan pasien " << nextPatient.nama << endl;
                         string isOnlineString = (nextPatient.isOnline) ? "true" : "false";
                         write(socket, buffer("Pemanggilan pasien -" + nextPatient.nama + "-" + isOnlineString + "\n"));
-                        handlePendaftaranSuster(move(socket), nextPatient.isOnline);
+                        pasienQueue pasienStatus;
+                        pasienStatus.isOnline = nextPatient.isOnline;
+                        pasienStatus.isDequeue = false;
+                        pasienStatus.pilihanPoliklinik = oldPatient.pilihPoliklinik;
+                        handlePendaftaranSuster(move(socket), pasienStatus);
                     }
                     else
                     {
@@ -644,9 +648,26 @@ private:
                 pAwal.tekananDarah.sistolik = stoi(dataPemeriksaanAwalArray[3]);
                 pAwal.tekananDarah.diastolik = stoi(dataPemeriksaanAwalArray[4]);
                 insertPemeriksaanAwalByID(pAwal, pasienStatus.nomorPasien);
-                break;
+                Poliklinik pilihPoli = convertStringToPoliklinik(pasienStatus.pilihanPoliklinik);
+                switch (pilihPoli)
+                {
+                case UMUM:
+                    poliklinikUmumQueue_.enqueue(pasienStatus);
+                    break;
+                case MATA:
+                    poliklinikMataQueue_.enqueue(pasienStatus);
+                    break;
+                case GIGI:
+                    poliklinikGigiQueue_.enqueue(pasienStatus);
+                    break;
+                case THT:
+                    poliklinikTHTQueue_.enqueue(pasienStatus);
+                    break;
+                default:
+                    cout << "Error : Tidak ada poliklinik yang dipilih" << endl;
+                    break;
+                }
             }
-            if ()
         }
         catch (exception &e)
         {
@@ -678,11 +699,12 @@ private:
                     splitString(request, "-", requestArray, count);
                     if (requestArray[0].find("ADD_DIAGNOSA") != string::npos)
                     {
+                        int nomorPasien;
                         Diagnosa pBantu = new diagnosa;
                         pBantu->hasilDiagnosa = requestArray[1];
                         pBantu->waktuDiagnosa = requestArray[2];
                         pBantu->next = NULL;
-                        insertLastDiagnosa(nomorPasien, pBantu);
+                        insertLastDiagnosa(pBantu, nomorPasien);
                     }
                 }
             }
@@ -697,16 +719,27 @@ private:
     {
     }
 
-    void handleKasir(ip::tcp::socket socket, bool isOnline)
+    void handleKasir(ip::tcp::socket socket, pasienQueue pasienStatus)
     {
+        boost::asio::streambuf dynamicBuffer;
+        read_until(socket, dynamicBuffer, "\n");
+        string response;
+        istream is(&dynamicBuffer);
+        getline(is, response);
+        // udh nerima pesan next pasien
     }
-
+    // PR - fungsi yang dibutuhkan
+    void insertPemeriksaanAwalByID(pemeriksaanAwal pBaru, int nomorPasien){};
+    void insertLastDiagnosa(Diagnosa pBaru, int nomorPasien){};
+    void insertLastPasien(Pasien pBaru){};
+    bool checkDokterOnline(Poliklinik pilihPoliklinik) {}
+    bool searchdataPasienByID(Pasien pBaru, int nomorPasien){};
     bool isDaftar, isPasienKasir;
     ip::tcp::acceptor acceptor_;
     ip::tcp::socket socket_;
     boost::asio::io_service ioService_;
     Queue<PasienAntrianPendaftaran> registrationQueue_;
-    Queue<int> poliklinikUmumQueue_, poliklinikMataQueue_, poliklinikTHTQueue_, poliklinikGigiQueue_, kasirQueue_;
+    Queue<pasienQueue> poliklinikUmumQueue_, poliklinikMataQueue_, poliklinikTHTQueue_, poliklinikGigiQueue_, kasirQueue_;
     poliklinikStatus poliklinikArray[5] = {
         {UMUM, false},
         {MATA, false},

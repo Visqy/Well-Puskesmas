@@ -77,7 +77,7 @@ struct riwayattransaksi
 {
     int nomorTransaksi, idPasien;
     string waktuTransaksi, namaPasien;
-    Treatment treatment;
+    treatment *treatmentPasien;
     long total;
     riwayattransaksi *next;
 };
