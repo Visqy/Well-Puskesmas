@@ -1,33 +1,14 @@
 
-# Proyek UAS - CLI Point Of Sale
+# Proyek UAS - Well Puskesmas
 
-Simple C++ Point Of Sale using sqlite3 for database
-
-
-## Demo
-
-To run the demo, follow the steps below:
-
-- Download the "main.exe" and "database.db" files from demo folder
-- Save the files to a specific location on your computer.
-- Double-click on the "main.exe" file to execute it.
-- Ensure that the "database.db" file is placed in the appropriate directory as instructed by the application's documentation or developer.
-- The demo will now run, utilizing the "database.db" file for its intended functionality.
-
-Default login account
-```
-user password
-admin 123
-supplier 123
-kasir 123
-```
+Simple C++ Healthcare Management using sqlite3 for database and socket boost::asio
 
 ## Installation
 
 Download and install Msys2 from [msys2.org](https://www.msys2.org/). Then, open an Msys2 shell and install all build tools and libraries needed: 
 ```shell
 pacman -Syu
-pacman -S mingw-w64-x86_64-toolchain
+pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-boost msys2-w32api-headers
 ```
 To complete the setup, you also need to add the Msys2 installation directory to your system's PATH variable. Here's how you can do it:
 
@@ -45,19 +26,19 @@ After adding the Msys2 directory to the PATH variable, you should be able to acc
 Next, open a Terminal and run the following commands:
 
 ```bash
-  git clone https://github.com/Visqy/Proyek-UAS-POS.git
-  cd Proyek-UAS-POS
-  g++ main.cpp -o main.exe -lsqlite3
-  main.exe
+  git clone https://github.com/Visqy/Well-Puskesmas.git
+  cd Well-Puskesmas
+  g++ server.cpp -o server.exe -lboost_program_options-mt -lws2_32 -lwsock32 -lsqlite3 
+  cd client
+  g++ client.cpp -o client -lboost_program_options-mt -lws2_32
 ```
     
 ## Authors
 
 - [@Visqy](https://github.com/Visqy) a.k.a. Sabiq
-- [@juans20](https://github.com/juans20) a.k.a. Najwan
-- [@vaioretto22](https://github.com/vaioretto22) a.k.a. Fathan
-- [@firlyyuzmitaa](https://github.com/firlyyuzmitaa) a.k.a. Firly
-- [@asrieeputri](https://github.com/asrieeputri) a.k.a. Asrie
-- [@rsndaaa](https://github.com/rsndaaa) a.k.a. Risanda
+- [@Paneva](https://github.com/Paneva) a.k.a. Zidan
+- [@ciprut1304](https://github.com/ciprut1304) a.k.a. Catur
+- [@woozaxu](https://github.com/woozaxu) a.k.a. Yenita
+- [@Nthnla](https://github.com/Nthnla) a.k.a. Nathaniela
 
 
